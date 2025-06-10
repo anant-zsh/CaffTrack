@@ -1,12 +1,29 @@
+import CoffeeForm from "./components/CoffeeForm";
+import Hero from "./components/Hero";
+import History from "./components/History";
+import Layout from "./components/Layout";
+import Stats from "./components/Stats";
 
 
 function App() {
 
+  const isAunthenticated = false;
+
+  const authenticatedContent = (
+    <>
+      <Stats />
+      <History />
+    </>
+  )
 
   return (
-    <>
-      <h1 className="text-5xl">Hi</h1>
-    </>
+    <div className="h-screen overflow-y-auto overscroll-none">
+      <Layout>
+        <Hero />
+        <CoffeeForm isAunthenticated={isAunthenticated}/>
+        {isAunthenticated && (authenticatedContent)}
+      </Layout>
+    </div>
   )
 }
 
