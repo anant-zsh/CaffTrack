@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import Modal from './Modal'
 import Authentication from './Authentication'
+import { useAuth } from '../context/AuthContext'
 
 const Layout = (props) => {
     const { children } = props
+
+    const { globalUser, logout } = useAuth()
 
     const [showModal, setShowModal] = useState(false)
 
@@ -13,12 +16,19 @@ const Layout = (props) => {
                 <h1 className='text-2xl font-bold text-white'>CaffTrack</h1>
                 <p className='text-white'>For Coffee Insatiates</p>
             </div>
-            <button onClick={() => {
-                setShowModal(true)
-            }} className='flex justify-between items-center gap-3 text-green-500 border rounded-4xl px-3 py-2 hover:bg-green-600 hover:text-black active:bg-green-400 cursor-pointer'>
-                <p>Sign up free</p>
-                <i className="fa-solid fa-mug-hot"></i>
-            </button>
+            {globalUser ? (
+                <button onClick={logout} className='flex justify-between items-center gap-3 text-green-500 border rounded-4xl px-3 py-2 hover:bg-green-600 hover:text-black active:bg-green-400 cursor-pointer'>
+                    <p>Logout</p>
+                    <i className="fa-solid fa-mug-hot"></i>
+                </button>
+            ) : (
+                <button onClick={() => {
+                    setShowModal(true)
+                }} className='flex justify-between items-center gap-3 text-green-500 border rounded-4xl px-3 py-2 hover:bg-green-600 hover:text-black active:bg-green-400 cursor-pointer'>
+                    <p>Sign up free</p>
+                    <i className="fa-solid fa-mug-hot"></i>
+                </button>
+            )}
         </header>
     )
     const footer = (
@@ -42,9 +52,10 @@ const Layout = (props) => {
             {showModal && (
                 <Modal handleCloseModal={() => {
                     setShowModal(false)
-                    console.log('clicked bg')
-                    }}>
-                    <Authentication />
+                }}>
+                    <Authentication handleCloseModal={() => {
+                        setShowModal(false)
+                    }} />
                 </Modal>
             )}
             {header}

@@ -1,5 +1,6 @@
 import React from 'react'
-import { calculateCoffeeStats, calculateCurrentCaffeineLevel, coffeeConsumptionHistory, getTopThreeCoffees, statusLevels } from '../utils';
+import { calculateCoffeeStats, calculateCurrentCaffeineLevel, getTopThreeCoffees, statusLevels } from '../utils';
+import { useAuth } from '../context/AuthContext';
 
 
 function StatCard(props) {
@@ -15,9 +16,11 @@ function StatCard(props) {
 
 
 const Stats = () => {
-    const stats = calculateCoffeeStats(coffeeConsumptionHistory)
+    const {globalData} = useAuth()
 
-    const caffeineLevel = calculateCurrentCaffeineLevel(coffeeConsumptionHistory)
+    const stats = calculateCoffeeStats(globalData)
+
+    const caffeineLevel = calculateCurrentCaffeineLevel(globalData)
 
     const warningLevel = caffeineLevel < statusLevels['low'].maxLevel ? 'low' : caffeineLevel < statusLevels['moderate'].maxLevel ? 'moderate' : 'high'
 
@@ -31,7 +34,7 @@ const Stats = () => {
                 <StatCard lg title="Active Caffeine Level">
                     <div>
                         <p className='font-mono'><span>{caffeineLevel}</span> mg</p>
-                        <h5 style={{ color: statusLevels[warningLevel].color, background: statusLevels[warningLevel].background }}>Low</h5>
+                        <h5 style={{ color: statusLevels[warningLevel].color, background: statusLevels[warningLevel].background }}>{warningLevel}</h5>
                     </div>
                     <p>{statusLevels[warningLevel].description}</p>
                 </StatCard>
@@ -42,10 +45,10 @@ const Stats = () => {
                     <p><span>{stats.average_coffees}</span></p>
                 </StatCard>
                 <StatCard title="Daily Cost (₹)">
-                    <p>₹ <span>{stats.daily_cost * 85}</span></p>
+                    <p>₹ <span>{stats.daily_cost}</span></p>
                 </StatCard>
                 <StatCard title="Total Cost (₹)">
-                    <p>₹ <span>{stats.total_cost * 85}</span></p>
+                    <p>₹ <span>{stats.total_cost}</span></p>
                 </StatCard>
             </div>
 
@@ -59,7 +62,7 @@ const Stats = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {getTopThreeCoffees(coffeeConsumptionHistory).map((coffee, coffeeIndex) => (
+                        {getTopThreeCoffees(globalData).map((coffee, coffeeIndex) => (
                             <tr key={coffeeIndex} className="hover:bg-gray-50">
                                 <td className="px-4 py-2 border">{coffee.coffeeName}</td>
                                 <td className="px-4 py-2 border">{coffee.count}</td>

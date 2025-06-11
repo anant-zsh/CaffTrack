@@ -1,14 +1,41 @@
 import React, { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 
+const Authentication = (props) => {
+    const {handleCloseModal} = props
 
-const Authentication = () => {
     const [isRegistration, setIsRegistration] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isAuthenticating, setIsAuthenticating] = useState(false)
+    const [error, setError] = useState(null)
 
+    const { signup, login } = useAuth()
 
-    async function handleAunthenticate() {
+    async function handleAuthenticate() {
+        if (!email || !email.includes('@') || !password || (!password.length >= 6 || isAuthenticating)) {
+            return
+        }
+
+        try {
+            setIsAuthenticating(true)
+            setError(null)
+
+            if (isRegistration) {
+                // register a user
+                await signup (email, password)
+            }
+            else {
+                // login a user
+                await login (email, password)
+            }
+            handleCloseModal()
+        } catch (error) {
+            console.log(error.message)
+            setError(error.message)
+        } finally {
+            setIsAuthenticating(false)
+        }
 
     }
 
@@ -18,6 +45,10 @@ const Authentication = () => {
             {/* Title */}
             <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">{isRegistration ? 'Sign Up' : 'Login'}</h2>
             <p className="text-sm text-gray-500 text-center mb-6">{isRegistration ? `Create your account!` : 'Sign in to your account!'}</p>
+
+            {error && (
+                <p className='mb-3'>❌ {error}</p>
+            )}
 
             {/* Inputs */}
             <div className="space-y-4">
@@ -38,9 +69,9 @@ const Authentication = () => {
 
                 {/* Submit Button */}
                 <button
-                    onClick={handleAunthenticate}
+                    onClick={handleAuthenticate}
                     className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl transition-all shadow-md">
-                    Submit
+                    {isAuthenticating ? 'Authenticating...' : 'Submit'}
                 </button>
             </div>
 
@@ -50,9 +81,9 @@ const Authentication = () => {
             {/* Footer */}
             <div className="text-center">
                 <p className="text-sm text-gray-600">{!isRegistration ? `Don't have an account?` : 'Already have an account?'}</p>
-                <button 
-                onClick={() => setIsRegistration(!isRegistration)}
-                className="mt-2 cursor-pointer text-blue-600 hover:underline font-medium">{!isRegistration ? 'Sign Up' : 'Login'}</button>
+                <button
+                    onClick={() => setIsRegistration(!isRegistration)}
+                    className="mt-2 cursor-pointer text-blue-600 hover:underline font-medium">{!isRegistration ? 'Sign Up' : 'Login'}</button>
             </div>
         </div>
 

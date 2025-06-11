@@ -1,7 +1,9 @@
 import React from 'react'
-import { calculateCurrentCaffeineLevel, coffeeConsumptionHistory, getCaffeineAmount, timeSinceConsumption } from '../utils'
+import { calculateCurrentCaffeineLevel, getCaffeineAmount, timeSinceConsumption } from '../utils'
+import { useAuth } from '../context/AuthContext'
 
 const History = () => {
+    const {globalData} = useAuth()
     return (
         <>
             <div className='mx-10 mt-10 mb-3 flex items-center gap-2 text-4xl font-semibold'>
@@ -11,9 +13,9 @@ const History = () => {
             <p className='mx-10'><i>hover for more information!</i></p>
 
             <div className='grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 mx-10 mt-2'>
-                {Object.keys(coffeeConsumptionHistory).sort((a, b) => b - a).map((utcTime, coffeeIndex) => {
+                {Object.keys(globalData).sort((a, b) => b - a).map((utcTime, coffeeIndex) => {
 
-                    const coffee = coffeeConsumptionHistory[utcTime]
+                    const coffee = globalData[utcTime]
                     const timeSinceConsume = timeSinceConsumption(utcTime)
                     const originalAmount = getCaffeineAmount(coffee.name)
                     const remainingAmount = calculateCurrentCaffeineLevel({
